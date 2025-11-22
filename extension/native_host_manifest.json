@@ -1,0 +1,9 @@
+{
+  "name": "com.flowstate.extension",
+  "description": "Flow State Facilitator - Native Messaging Host",
+  "path": "bridge.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://EXTENSION_ID_PLACEHOLDER/"
+  ]
+}

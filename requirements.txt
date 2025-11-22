@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+supabase
+sqlalchemy
+pywin32
+psutil
+pynput
+pycaw
+Pillow
+httpx
+aiofiles
+requests
+comtypes

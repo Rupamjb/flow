@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Flow State Facilitator</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin: 0;
+    }
+    
+    h1 {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+    }
+    
+    .status {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .status-indicator.active {
+      background: #4ade80;
+      box-shadow: 0 0 10px #4ade80;
+    }
+    
+    .status-indicator.inactive {
+      background: #94a3b8;
+    }
+    
+    button {
+      width: 100%;
+      padding: 10px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    button:hover {
+      transform: scale(1.02);
+    }
+    
+    .link {
+      display: block;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .link:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Flow State Facilitator</h1>
+  
+  <div class="status">
+    <div>
+      <span class="status-indicator inactive" id="statusIndicator"></span>
+      <span id="statusText">Not in flow</span>
+    </div>
+    <div style="margin-top: 8px; font-size: 12px; opacity: 0.9;" id="durationText">
+      Duration: 0m 0s
+    </div>
+  </div>
+  
+  <button id="dashboardBtn">Open Dashboard</button>
+  
+  <a href="#" class="link" id="breakFlowLink" style="display: none;">Break Flow State</a>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+    "schedule": {
+        "start": "18:00",
+        "end": "20:00"
+    },
+    "productive_keywords": [
+        "code",
+        "visual studio",
+        "docs",
+        "canvas",
+        "obsidian"
+    ],
+    "distracting_keywords": [
+        "netflix",
+        "twitter",
+        "instagram",
+        "steam",
+        "discord"
+    ],
+    "auto_flow_active_seconds": 5,
+    "baseline_minutes": 25,
+    "initialized": true
+}

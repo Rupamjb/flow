@@ -1,0 +1,10 @@
+{
+  "name": "com.flow.engine",
+  "description": "Flow State Facilitator Bridge",
+  "path": "D:\\flow\\extension\\bridge.bat",
+  "args": [],
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://npolehcemjionglcmdgjfpbijgpnpllg/"
+  ]
+}

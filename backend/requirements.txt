@@ -1,0 +1,31 @@
+# Core FastAPI and Server
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Database
+supabase>=1.0.0
+sqlalchemy>=2.0.0
+
+# Windows OS Integration
+pywin32>=306
+psutil>=5.9.0
+
+# Input Monitoring (APM Tracking)
+pynput>=1.7.0
+
+# Audio Control (for micro-interventions)
+pycaw>=20230407
+
+# Image Processing (for screen effects)
+Pillow>=10.0.0
+
+# HTTP Client
+httpx>=0.24.0
+
+# Async Support
+aiofiles>=23.0.0
+
+# System Tray
+pystray>=0.19.0

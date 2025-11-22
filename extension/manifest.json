@@ -1,0 +1,27 @@
+{
+    "name": "Flow State Facilitator",
+    "description": "Connects browser activity to the Flow Engine backend.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": [
+        "nativeMessaging",
+        "tabs",
+        "activeTab",
+        "scripting",
+        "webNavigation"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Flow State Facilitator"
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    }
+}
