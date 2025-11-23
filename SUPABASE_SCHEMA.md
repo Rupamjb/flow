@@ -13,13 +13,17 @@ This document contains the SQL schema for setting up your Supabase database.
 ## Database Schema
 
 ```sql
--- Users table
+-- Users table (with onboarding and cognitive profile fields)
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   level INTEGER DEFAULT 1,
   total_xp INTEGER DEFAULT 0,
   baseline_focus_minutes INTEGER DEFAULT 25,
+  cognitive_profile JSONB DEFAULT '{"focus": 0, "stamina": 0, "resilience": 0, "consistency": 0}'::jsonb,
+  onboarding_data JSONB,
+  sessions_count INTEGER DEFAULT 0,
+  onboarding_complete BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

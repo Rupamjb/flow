@@ -9,7 +9,8 @@ import threading
 import time
 import sys
 import logging
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict
+from datetime import datetime, timedelta
 
 class FlowBlocker:
     def __init__(self, on_resume: Optional[Callable] = None, on_break: Optional[Callable] = None):
@@ -17,11 +18,12 @@ class FlowBlocker:
         self.active = False
         self.on_resume = on_resume
         self.on_break = on_break
-        self.countdown_value = 10
+        self.countdown_value = 3  # Short countdown before buttons enable
         self.resume_button = None
         self.break_button = None
         self.timer_label = None
         self.overlay_thread = None
+        self.current_app_name = None  # Track which app triggered intervention
 
     def _create_overlay(self, message: str):
         """Create the Tkinter overlay window"""
@@ -44,7 +46,7 @@ class FlowBlocker:
         # Header
         header = tk.Label(
             container, 
-            text="⚠️ FLOW STATE BREACH DETECTED", 
+            text="FLOW STATE BREACH DETECTED", 
             font=("Segoe UI", 32, "bold"),
             fg="#d00000",  # Alarming Red
             bg='#0a0a0a'
@@ -143,11 +145,15 @@ class FlowBlocker:
             self.timer_label.config(text="CHOOSE WISELY", font=("Segoe UI", 24))
 
     def _handle_resume(self):
-        """Handle resume action"""
+        """Handle resume action - Close app/tab and grant rewards"""
         try:
+            # Close the app/tab that triggered intervention
+            if self.current_app_name:
+                self.close_app_or_tab(self.current_app_name)
+            
             if self.on_resume:
                 self.on_resume()
-                logging.getLogger("FlowEngine").info("Wait for break chosen (resume)")
+                logging.getLogger("FlowEngine").info("Wait for break chosen (resume) - App closed")
         except Exception as e:
             logging.getLogger("FlowEngine").error(f"on_resume error: {e}")
         self.hide()
@@ -162,13 +168,14 @@ class FlowBlocker:
             logging.getLogger("FlowEngine").error(f"on_break error: {e}")
         self.hide()
 
-    def show(self, message: str = "You are building Level 5 Resilience. Don't quit now."):
+    def show(self, message: str = "You are building Level 5 Resilience. Don't quit now.", app_name: Optional[str] = None):
         """Show the blocking overlay"""
         if self.active:
             return
             
         self.active = True
         self.countdown_value = 3
+        self.current_app_name = app_name
         
         # Run Tkinter in a separate thread to avoid blocking main loop
         self.overlay_thread = threading.Thread(
@@ -184,6 +191,39 @@ class FlowBlocker:
             self.root.quit()
             self.root = None
         self.active = False
+    
+    def close_app_or_tab(self, app_name: str):
+        """
+        Close the app or tab that triggered the intervention.
+        For browser tabs, this will be handled by the extension.
+        For apps, we'll minimize/close the window.
+        """
+        try:
+            import win32gui
+            import win32con
+            
+            # Find window by process name
+            def enum_windows_callback(hwnd, windows):
+                if win32gui.IsWindowVisible(hwnd):
+                    window_text = win32gui.GetWindowText(hwnd)
+                    if app_name.lower() in window_text.lower():
+                        windows.append(hwnd)
+                return True
+            
+            windows = []
+            win32gui.EnumWindows(enum_windows_callback, windows)
+            
+            # Close or minimize the window
+            for hwnd in windows:
+                try:
+                    win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+                    logging.getLogger("FlowEngine").info(f"Attempted to close window: {app_name}")
+                except Exception as e:
+                    logging.getLogger("FlowEngine").warning(f"Could not close window: {e}")
+        except ImportError:
+            logging.getLogger("FlowEngine").warning("win32gui not available. Cannot close apps.")
+        except Exception as e:
+            logging.getLogger("FlowEngine").error(f"Error closing app: {e}")
 
 # Standalone test
 if __name__ == "__main__":

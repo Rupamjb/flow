@@ -52,6 +52,15 @@ class FlowLauncher:
         # Auto-start check
         self._check_config()
 
+    def _check_config(self):
+        """Check if config exists and auto-start if needed"""
+        if CONFIG_FILE.exists():
+            # Could load config here to check for auto-start preference
+            pass
+        else:
+            # First time run?
+            pass
+
     def _setup_styles(self):
         self.style = ttk.Style()
         self.style.theme_use('clam')

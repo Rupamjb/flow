@@ -89,16 +89,16 @@ class AudioController:
             self.volume = interface.QueryInterface(IAudioEndpointVolume)
             self.original_volume = self.volume.GetMasterVolumeLevelScalar()
         except Exception as e:
-            print(f"❌ Failed to initialize audio: {e}")
+            print(f"[ERROR] Failed to initialize audio: {e}")
             self.volume = None
     
     def fade_out(self, duration: int = 10):
         """Linear cross-fade volume reduction"""
         if not self.volume:
-            print("⚠️  Audio control not available")
+            print("[WARN] Audio control not available")
             return
         
-        print(f"🔊 Fading out audio over {duration} seconds...")
+        print(f"[AUDIO] Fading out audio over {duration} seconds...")
         
         try:
             start_volume = self.volume.GetMasterVolumeLevelScalar()
@@ -114,14 +114,14 @@ class AudioController:
             print("🔇 Audio faded to 0%")
             
         except Exception as e:
-            print(f"❌ Audio fade error: {e}")
+            print(f"[ERROR] Audio fade error: {e}")
     
     def fade_in(self, duration: int = 5):
         """Fade audio back in"""
         if not self.volume or self.original_volume is None:
             return
         
-        print(f"🔊 Fading in audio over {duration} seconds...")
+        print(f"[AUDIO] Fading in audio over {duration} seconds...")
         
         try:
             steps = 20
@@ -132,10 +132,10 @@ class AudioController:
                 self.volume.SetMasterVolumeLevelScalar(new_volume, None)
                 time.sleep(step_duration)
             
-            print("🔊 Audio restored")
+            print("[AUDIO] Audio restored")
             
         except Exception as e:
-            print(f"❌ Audio fade in error: {e}")
+            print(f"[ERROR] Audio fade in error: {e}")
     
     def restore_volume(self):
         """Restore original volume immediately"""

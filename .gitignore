@@ -1,61 +1,46 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
-venv/
 env/
-ENV/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
 
-# IDE
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build Artifacts
+dist/
+build/
+*.spec
+*.exe
+*.manifest
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Environment variables
-.env
-
-# Logs
-*.log
-
-# Local database
-*.db
-
-# Build files
-build/
-dist/
-*.spec
-
-# Node modules (for frontend)
-node_modules/
-
-# Local development files
-*.local
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
+# OS
 Thumbs.db
+.DS_Store
+
+# Project Specific
+flow_engine.log
+*.log
+flow.db
+user_config.json
+backend/dist/
+frontend-react/dist/

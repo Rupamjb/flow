@@ -13,8 +13,9 @@ body {
     background-color: var(--color-void);
     color: #ffffff;
     font-family: 'Inter', sans-serif;
-    overflow: hidden;
-    /* Prevent scrolling on dashboard */
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Allow vertical scrolling for dashboard */
 }
 
 /* Custom Scrollbar */

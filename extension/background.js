@@ -15,7 +15,26 @@ function connectToNativeHost() {
     port.onMessage.addListener((msg) => {
       console.log("Received from native host:", msg);
       try {
-        if (msg && msg.status === 'intervention_triggered' && lastReportedTabId != null) {
+        // Handle "WAIT FOR BREAK" - close the distracting tab
+        if (msg && msg.status === 'wait_for_break' && lastReportedTabId != null) {
+          chrome.tabs.get(lastReportedTabId, (tab) => {
+            if (chrome.runtime.lastError) {
+              console.warn('tabs.get error:', chrome.runtime.lastError);
+              return;
+            }
+            if (tab && tab.id) {
+              chrome.tabs.remove(tab.id, () => {
+                if (chrome.runtime.lastError) {
+                  console.warn('tabs.remove error:', chrome.runtime.lastError);
+                } else {
+                  console.log('Closed tab on WAIT FOR BREAK:', tab.id);
+                }
+              });
+            }
+          });
+        }
+        // Handle intervention triggered (legacy)
+        else if (msg && msg.status === 'intervention_triggered' && lastReportedTabId != null) {
           // Attempt to close the last reported (active) tab
           chrome.tabs.get(lastReportedTabId, (tab) => {
             if (chrome.runtime.lastError) {

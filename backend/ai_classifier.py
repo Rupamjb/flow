@@ -13,8 +13,9 @@ import json
 logger = logging.getLogger("FlowEngine.AIClassifier")
 
 # AI API Configuration
-AI_API_KEY = os.getenv("AI_API_KEY", "")  # User will provide
-AI_API_ENDPOINT = os.getenv("AI_API_ENDPOINT", "")  # User will provide
+# Support both AI_API_KEY and GROQ_API_KEY for flexibility
+AI_API_KEY = os.getenv("AI_API_KEY") or os.getenv("GROQ_API_KEY", "")
+AI_API_ENDPOINT = os.getenv("AI_API_ENDPOINT", "")
 
 class AIClassifier:
     """
@@ -175,7 +176,7 @@ Respond in JSON format:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a productivity assistant that classifies URLs and apps as productive or distracting. Always respond in valid JSON format."
+                    "content": "You are a productivity assistant that classifies URLs and apps as productive or distracting. ALWAYS respond with ONLY valid JSON format. Do not include any markdown formatting or explanations outside the JSON object."
                 },
                 {
                     "role": "user",
@@ -183,7 +184,8 @@ Respond in JSON format:
                 }
             ],
             "temperature": 0.3,
-            "max_tokens": 150
+            "max_tokens": 300,
+            "response_format": {"type": "json_object"}  # Force JSON response
         }
         
         try:
@@ -191,7 +193,9 @@ Respond in JSON format:
             response.raise_for_status()
             
             result = response.json()
-            return result['choices'][0]['message']['content']
+            content = result['choices'][0]['message']['content']
+            logger.info(f"AI API response: {content[:200]}...")
+            return content
             
         except requests.exceptions.RequestException as e:
             logger.error(f"Groq API request failed: {e}")
@@ -201,8 +205,9 @@ Respond in JSON format:
             raise
     
     def _parse_ai_response(self, response: str) -> Dict:
-        """Parse AI API response"""
+        """Parse AI API response - handles both JSON and plain text"""
         try:
+            # First, try to parse as JSON
             result = json.loads(response)
             return {
                 'classification': result.get('classification', 'unknown'),
@@ -211,12 +216,42 @@ Respond in JSON format:
                 'source': 'ai'
             }
         except json.JSONDecodeError:
-            logger.error("Failed to parse AI response")
+            # If JSON parsing fails, try to extract JSON from markdown code blocks
+            import re
+            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response, re.DOTALL)
+            if json_match:
+                try:
+                    result = json.loads(json_match.group(1))
+                    return {
+                        'classification': result.get('classification', 'unknown'),
+                        'confidence': result.get('confidence', 0.5),
+                        'reasoning': result.get('reasoning', ''),
+                        'source': 'ai'
+                    }
+                except json.JSONDecodeError:
+                    pass
+            
+            # If still no JSON, try to find JSON object in the response
+            json_match = re.search(r'\{[^{}]*"(?:classification|reasoning)"[^{}]*\}', response, re.DOTALL)
+            if json_match:
+                try:
+                    result = json.loads(json_match.group(0))
+                    return {
+                        'classification': result.get('classification', 'unknown'),
+                        'confidence': result.get('confidence', 0.5),
+                        'reasoning': result.get('reasoning', ''),
+                        'source': 'ai'
+                    }
+                except json.JSONDecodeError:
+                    pass
+            
+            # If all JSON parsing fails, treat the entire response as reasoning
+            logger.warning(f"AI response is not JSON, using as plain text. Response: {response[:200]}...")
             return {
                 'classification': 'unknown',
-                'confidence': 0.0,
-                'reasoning': 'Parse error',
-                'source': 'error'
+                'confidence': 0.5,
+                'reasoning': response.strip(),
+                'source': 'ai_text'
             }
     
     def _fallback_url_classification(self, url: str) -> Dict:
